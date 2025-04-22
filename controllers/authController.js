@@ -2,54 +2,132 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
-exports.register = async (req, res, next) => {
+// Register user
+const register = async (req, res) => {
     try {
-        const { email, password } = req.body
-        if (!email || !password) {
-            return res
-                .status(400)
-                .json({ message: 'Email and password are required' })
+        const { username, email, password } = req.body
+
+        // Check if user already exists
+        const userExists = await User.findOne({ email })
+        if (userExists) {
+            return res.status(400).json({ message: 'User already exists' })
         }
-        const existingUser = await User.findOne({ email })
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email already in use' })
-        }
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const user = new User({ email, password: hashedPassword })
-        await user.save()
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '1h'
+
+        // Hash password
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
+
+        // Create user
+        const user = await User.create({
+            username,
+            email,
+            password: hashedPassword
         })
-        res.status(201).json({ token })
+
+        // Generate token
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '30d'
+        })
+
+        res.status(201).json({
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            token
+        })
     } catch (error) {
-        next(error)
+        console.error('Register error:', error)
+        res.status(500).json({ message: 'Server error' })
     }
 }
 
-exports.login = async (req, res, next) => {
+// Login user
+const login = async (req, res) => {
     try {
         const { email, password } = req.body
+
+        // Check if user exists
         const user = await User.findOne({ email })
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: 'Invalid credentials' })
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid credentials' })
         }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' })
+        }
+
+        // Generate token
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '1h'
+            expiresIn: '30d'
         })
-        res.status(200).json({ token })
+
+        res.json({
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            token
+        })
     } catch (error) {
-        next(error)
+        console.error('Login error:', error)
+        res.status(500).json({ message: 'Server error' })
     }
 }
 
-exports.getProfile = async (req, res, next) => {
+// Get user profile
+const getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).populate(
-            'completedTutorials',
-            'title'
-        )
-        res.status(200).json(user)
+        const user = await User.findById(req.user.id).select('-password')
+        res.json(user)
     } catch (error) {
-        next(error)
+        console.error('Get profile error:', error)
+        res.status(500).json({ message: 'Server error' })
     }
+}
+
+// Social login with Clerk
+const socialLogin = async (req, res) => {
+    try {
+        console.log(
+            'Social login requested with token:',
+            req.body.token ? 'Token provided' : 'No token'
+        )
+
+        // The user is already authenticated and attached to req.user by the Clerk middleware
+        const user = req.user
+
+        if (!user) {
+            return res.status(400).json({
+                message:
+                    'User not found in request. Middleware may have failed.'
+            })
+        }
+
+        // Generate our own JWT token for internal use
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '30d'
+        })
+
+        res.json({
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            token,
+            clerkId: user.clerkId
+        })
+    } catch (error) {
+        console.error('Social login error:', error)
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
+        })
+    }
+}
+
+module.exports = {
+    register,
+    login,
+    getProfile,
+    socialLogin
 }

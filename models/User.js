@@ -10,8 +10,31 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: [true, 'Password is required'],
+        required: function () {
+            return !this.clerkId
+        }, // Only required if not using Clerk
         minlength: 6
+    },
+    username: {
+        type: String,
+        trim: true
+    },
+    firstName: {
+        type: String,
+        trim: true
+    },
+    role: {
+        type: String,
+        trim: true
+    },
+    lastName: {
+        type: String,
+        trim: true
+    },
+    clerkId: {
+        type: String,
+        unique: true,
+        sparse: true // Allows the field to be null for regular users
     },
     completedTutorials: [
         {
