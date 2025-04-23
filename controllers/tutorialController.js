@@ -7,7 +7,7 @@ const User = require('../models/User')
 const getTutorials = async (req, res) => {
     try {
         // Get language from query params, default to English
-        const language = req.query.language?.toLowerCase() || 'english'
+        const language = req.query.language?.toLowerCase() || 'en'
 
         const tutorials = await Tutorial.find().sort({ createdAt: -1 })
 
