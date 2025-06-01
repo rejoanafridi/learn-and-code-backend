@@ -180,6 +180,265 @@ All endpoints are prefixed with `/api/v1`.
     }
     ```
 
+### Product Endpoints
+
+Manages product information, including inventory and pricing. All product endpoints are prefixed with `/api/v1/products`.
+
+#### 1. Create Product
+
+*   **Method:** `POST`
+*   **URL:** `/`
+*   **Description:** Creates a new product.
+*   **Request Body Example:**
+    ```json
+    {
+      "name": "Super Widget",
+      "description": "The best widget in the market.",
+      "price": 29.99,
+      "category": "Widgets", // Optional, default: 'General'
+      "stock": 100, // Optional, default: 0
+      "sku": "WDGT-SPR-001" // Optional, unique
+    }
+    ```
+*   **Success Response Example (201 Created):**
+    ```json
+    {
+      "success": true,
+      "data": {
+        "_id": "60d1f1a5c1b2c3a4d5e6f7g8",
+        "name": "Super Widget",
+        "description": "The best widget in the market.",
+        "price": 29.99,
+        "category": "Widgets",
+        "stock": 100,
+        "sku": "WDGT-SPR-001",
+        "createdAt": "2023-02-01T10:00:00.000Z",
+        "updatedAt": "2023-02-01T10:00:00.000Z"
+      }
+    }
+    ```
+*   **Error Response Example (400 Bad Request - Validation Error):**
+    ```json
+    {
+      "success": false,
+      "error": ["Product name is required.", "Price cannot be negative."]
+    }
+    ```
+
+#### 2. Get All Products
+
+*   **Method:** `GET`
+*   **URL:** `/`
+*   **Description:** Retrieves a list of all products. Supports pagination and filtering.
+*   **Query Parameters:**
+    *   `page` (number, optional): Page number for pagination (e.g., `1`).
+    *   `limit` (number, optional): Number of items per page (e.g., `10`).
+    *   `category` (string, optional): Filter by product category.
+    *   `name` (string, optional): Filter by product name (case-insensitive, partial match).
+*   **Success Response Example (200 OK):** (Similar structure to Get All Cards, showing product data)
+    ```json
+    {
+      "success": true,
+      "count": 1,
+      "pagination": {
+        "currentPage": 1,
+        "totalPages": 1,
+        "totalProducts": 1
+      },
+      "data": [
+        {
+          "_id": "60d1f1a5c1b2c3a4d5e6f7g8",
+          "name": "Super Widget",
+          // ... other product fields
+        }
+      ]
+    }
+    ```
+
+#### 3. Get Product by ID
+
+*   **Method:** `GET`
+*   **URL:** `/:productId`
+*   **Description:** Retrieves a specific product by its unique ID.
+*   **Success Response Example (200 OK):** (Similar to Get Card by ID, showing product data)
+
+#### 4. Update Product
+
+*   **Method:** `PUT`
+*   **URL:** `/:productId`
+*   **Description:** Updates an existing product by its ID.
+*   **Request Body Example:**
+    ```json
+    {
+      "price": 32.99,
+      "stock": 90
+    }
+    ```
+*   **Success Response Example (200 OK):** (Similar to Update Card, showing updated product data)
+
+#### 5. Delete Product
+
+*   **Method:** `DELETE`
+*   **URL:** `/:productId`
+*   **Description:** Deletes a product by its ID.
+*   **Success Response Example (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "Product deleted successfully"
+    }
+    ```
+
+### Address Endpoints
+
+Manages address information. All address endpoints are prefixed with `/api/v1/addresses`.
+
+#### 1. Create Address
+
+*   **Method:** `POST`
+*   **URL:** `/`
+*   **Description:** Creates a new address.
+*   **Request Body Example:**
+    ```json
+    {
+      "street": "123 Maple Drive",
+      "apartmentOrSuite": "Unit 5B", // Optional
+      "city": "Springfield",
+      "stateOrProvince": "IL",
+      "country": "USA",
+      "postalCode": "62704",
+      "addressType": "home", // Optional, default: 'home'. Enum: ['home', 'work', 'other']
+      "isDefault": false // Optional, default: false
+    }
+    ```
+*   **Success Response Example (201 Created):**
+    ```json
+    {
+      "success": true,
+      "data": {
+        "_id": "60d2f2b6d1c2d3e4f5g6h7i8",
+        "street": "123 Maple Drive",
+        // ... other address fields
+      }
+    }
+    ```
+
+#### 2. Get All Addresses
+
+*   **Method:** `GET`
+*   **URL:** `/`
+*   **Description:** Retrieves a list of all addresses. Supports pagination and filtering.
+*   **Query Parameters:**
+    *   `page` (number, optional): Page number.
+    *   `limit` (number, optional): Items per page.
+    *   `city` (string, optional): Filter by city (case-insensitive).
+    *   `postalCode` (string, optional): Filter by postal code.
+*   **Success Response Example (200 OK):** (Similar structure to Get All Cards, showing address data)
+
+#### 3. Get Address by ID
+
+*   **Method:** `GET`
+*   **URL:** `/:addressId`
+*   **Description:** Retrieves a specific address by ID.
+
+#### 4. Update Address
+
+*   **Method:** `PUT`
+*   **URL:** `/:addressId`
+*   **Description:** Updates an existing address.
+*   **Request Body Example:**
+    ```json
+    {
+      "street": "456 Oak Avenue",
+      "isDefault": true
+    }
+    ```
+
+#### 5. Delete Address
+
+*   **Method:** `DELETE`
+*   **URL:** `/:addressId`
+*   **Description:** Deletes an address by ID.
+
+### Habit Endpoints
+
+Manages habits and tracks their completion. All habit endpoints are prefixed with `/api/v1/habits`.
+
+#### 1. Create Habit
+
+*   **Method:** `POST`
+*   **URL:** `/`
+*   **Description:** Creates a new habit.
+*   **Request Body Example:**
+    ```json
+    {
+      "name": "Morning Meditation",
+      "description": "Meditate for 10 minutes every morning.",
+      "frequency": "daily", // Enum: ['daily', 'weekly', 'monthly', 'specific_days']
+      "daysOfWeek": [], // Optional, relevant if frequency is 'specific_days'. E.g. ["Monday", "Wednesday"]
+      "goal": "10 minutes"
+    }
+    ```
+*   **Success Response Example (201 Created):**
+    ```json
+    {
+      "success": true,
+      "data": {
+        "_id": "60d3f3c7e1d2e3f4g5h6i7j8",
+        "name": "Morning Meditation",
+        "currentStreak": 0,
+        "longestStreak": 0,
+        // ... other habit fields
+      }
+    }
+    ```
+
+#### 2. Get All Habits
+
+*   **Method:** `GET`
+*   **URL:** `/`
+*   **Description:** Retrieves a list of all habits. Supports pagination and filtering.
+*   **Query Parameters:**
+    *   `page` (number, optional): Page number.
+    *   `limit` (number, optional): Items per page.
+    *   `frequency` (string, optional): Filter by frequency (e.g., `daily`, `weekly`).
+    *   `name` (string, optional): Filter by name (case-insensitive, partial match).
+*   **Success Response Example (200 OK):** (Similar structure to Get All Cards, showing habit data)
+
+#### 3. Get Habit by ID
+
+*   **Method:** `GET`
+*   **URL:** `/:habitId`
+*   **Description:** Retrieves a specific habit by ID.
+
+#### 4. Update Habit
+
+*   **Method:** `PUT`
+*   **URL:** `/:habitId`
+*   **Description:** Updates an existing habit. Can also be used to mark a habit as complete and update streaks.
+*   **Request Body Example (General Update):**
+    ```json
+    {
+      "description": "Meditate for 15 minutes every morning upon waking.",
+      "goal": "15 minutes"
+    }
+    ```
+*   **Request Body Example (Marking Complete):**
+    To mark a habit as complete and update its streak, send:
+    ```json
+    {
+      "markComplete": true
+    }
+    ```
+    The server will update `lastCompletedDate`, `currentStreak`, and `longestStreak` accordingly.
+*   **Success Response Example (200 OK):** (Shows updated habit data, including potentially updated streaks)
+
+#### 5. Delete Habit
+
+*   **Method:** `DELETE`
+*   **URL:** `/:habitId`
+*   **Description:** Deletes a habit by ID.
+
 ## Environment Variables
 
 The application uses the following environment variables, which should be defined in a `.env` file in the project root (`autoCard/.env`):

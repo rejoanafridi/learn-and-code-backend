@@ -7,6 +7,9 @@ const apiRateLimiter = require('./src/middleware/rateLimiter');
 
 // Import routes
 const cardRoutes = require('./src/routes/cardRoutes');
+const productRoutes = require('./src/routes/productRoutes');
+const addressRoutes = require('./src/routes/addressRoutes');
+const habitRoutes = require('./src/routes/habitRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001; // Default to 3001 if PORT not in .env
@@ -40,6 +43,9 @@ mongoose.connect(MONGODB_URI, {
 
 // Mount routers
 app.use('/api/v1/cards', cardRoutes);
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/addresses', addressRoutes);
+app.use('/api/v1/habits', habitRoutes);
 
 // Basic Route - can be kept for a simple health check
 app.get('/', (req, res) => {
