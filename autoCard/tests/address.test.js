@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../server');
+const app = require('../server'); 
 const Address = require('../src/models/Address');
 const mongoose = require('mongoose');
 
@@ -23,7 +23,7 @@ describe('Address API', () => {
     postalCode: '10001',
     addressType: 'work',
   };
-
+  
   const yetAnotherAddressData = {
     street: '789 Pine Rd',
     city: 'Anytown', // Same city for filtering test
@@ -58,7 +58,7 @@ describe('Address API', () => {
       expect(res.body.success).toBe(false);
       expect(res.body.error).toEqual(expect.arrayContaining([expect.stringContaining('Street is required')]));
     });
-
+    
     it('should not create an address with invalid addressType', async () => {
       const invalidData = { ...validAddressData, addressType: 'invalidtype' };
       const res = await request(app)
@@ -83,7 +83,7 @@ describe('Address API', () => {
       expect(res.body.count).toBe(3);
       expect(res.body.data.length).toBe(3);
       // Default sort is createdAt desc, so last inserted is first
-      expect(res.body.data[0].street).toBe(yetAnotherAddressData.street);
+      expect(res.body.data[0].street).toBe(yetAnotherAddressData.street); 
     });
 
     it('should retrieve addresses with pagination (page 1, limit 2)', async () => {
@@ -129,7 +129,7 @@ describe('Address API', () => {
       const res = await request(app).get(`/api/v1/addresses/${nonExistentId}`);
       expect(res.statusCode).toEqual(404);
     });
-
+    
     it('should return 400 for an invalid ID format', async () => {
         const res = await request(app).get('/api/v1/addresses/invalidID');
         expect(res.statusCode).toEqual(400);
@@ -156,7 +156,7 @@ describe('Address API', () => {
       const updatedAddressInDb = await Address.findById(testAddress._id);
       expect(updatedAddressInDb.city).toBe(updates.city);
     });
-
+    
     it('should not update an address with invalid data (e.g. missing required field)', async () => {
       const updates = { city: "" }; // city is required
       const res = await request(app)

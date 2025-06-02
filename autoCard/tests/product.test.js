@@ -22,7 +22,7 @@ describe('Product API', () => {
     stock: 50,
     sku: 'TESTPROD002',
   };
-
+  
   const yetAnotherProductData = {
     name: 'Advanced Gizmo',
     description: 'A more advanced product.',
@@ -59,7 +59,7 @@ describe('Product API', () => {
       expect(res.body.success).toBe(false);
       expect(res.body.error).toEqual(expect.arrayContaining([expect.stringContaining('Product name is required')]));
     });
-
+    
     it('should not create a product with invalid price (e.g., negative)', async () => {
       const invalidData = { ...validProductData, price: -10 };
       const res = await request(app)
@@ -116,7 +116,7 @@ describe('Product API', () => {
       expect(res.body.pagination.totalPages).toBe(2);
       expect(res.body.data[0].name).toBe(yetAnotherProductData.name);
     });
-
+    
     it('should retrieve products with pagination (page 2, limit 2)', async () => {
       const res = await request(app).get('/api/v1/products?page=2&limit=2');
       expect(res.statusCode).toEqual(200);
@@ -198,7 +198,7 @@ describe('Product API', () => {
       expect(res.statusCode).toEqual(400);
       expect(res.body.error).toEqual(expect.arrayContaining([expect.stringContaining('Stock cannot be negative')]));
     });
-
+    
     it('should return 404 when trying to update a non-existent product', async () => {
         const nonExistentId = new mongoose.Types.ObjectId();
         const res = await request(app)
@@ -223,7 +223,7 @@ describe('Product API', () => {
       const deletedProductInDb = await Product.findById(testProduct._id);
       expect(deletedProductInDb).toBeNull();
     });
-
+    
     it('should return 404 when trying to delete a non-existent product', async () => {
         const nonExistentId = new mongoose.Types.ObjectId();
         const res = await request(app).delete(`/api/v1/products/${nonExistentId}`);

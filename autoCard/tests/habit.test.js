@@ -18,7 +18,7 @@ describe('Habit API', () => {
     goal: '3 times a week',
     daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
   };
-
+  
   const yetAnotherHabitData = { // For filtering by name
     name: 'Read Daily',
     description: 'Read for 30 minutes.',
@@ -122,7 +122,7 @@ describe('Habit API', () => {
       const res = await request(app).get(`/api/v1/habits/${nonExistentId}`);
       expect(res.statusCode).toEqual(404);
     });
-
+    
     it('should return 400 for an invalid ID format', async () => {
         const res = await request(app).get('/api/v1/habits/invalidID');
         expect(res.statusCode).toEqual(400);
@@ -134,12 +134,12 @@ describe('Habit API', () => {
   describe('PUT /api/v1/habits/:habitId', () => {
     let testHabit;
     beforeEach(async () => {
-      testHabit = await Habit.create({
-        name: 'Test Streak Habit',
+      testHabit = await Habit.create({ 
+        name: 'Test Streak Habit', 
         frequency: 'daily',
         currentStreak: 0,
         longestStreak: 0,
-        lastCompletedDate: null
+        lastCompletedDate: null 
       });
     });
 
@@ -170,10 +170,10 @@ describe('Habit API', () => {
       // Simulate completion yesterday
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      await Habit.findByIdAndUpdate(testHabit._id, {
-        lastCompletedDate: yesterday,
-        currentStreak: 1,
-        longestStreak: 1
+      await Habit.findByIdAndUpdate(testHabit._id, { 
+        lastCompletedDate: yesterday, 
+        currentStreak: 1, 
+        longestStreak: 1 
       });
 
       const res = await request(app)
@@ -183,14 +183,14 @@ describe('Habit API', () => {
       expect(res.body.data.currentStreak).toBe(2);
       expect(res.body.data.longestStreak).toBe(2);
     });
-
+    
     it('should reset streak if marked complete after a gap', async () => {
       const twoDaysAgo = new Date();
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-      await Habit.findByIdAndUpdate(testHabit._id, {
-        lastCompletedDate: twoDaysAgo,
+      await Habit.findByIdAndUpdate(testHabit._id, { 
+        lastCompletedDate: twoDaysAgo, 
         currentStreak: 5, // Some previous streak
-        longestStreak: 5
+        longestStreak: 5 
       });
 
       const res = await request(app)
@@ -200,11 +200,11 @@ describe('Habit API', () => {
       expect(res.body.data.currentStreak).toBe(1); // Resets to 1
       expect(res.body.data.longestStreak).toBe(5); // Longest streak remains
     });
-
+    
     it('should update longestStreak if currentStreak surpasses it', async () => {
-      await Habit.findByIdAndUpdate(testHabit._id, {
-        currentStreak: 3,
-        longestStreak: 3
+      await Habit.findByIdAndUpdate(testHabit._id, { 
+        currentStreak: 3, 
+        longestStreak: 3 
       });
       // Simulate a completion that would make currentStreak 4
       const yesterday = new Date();
@@ -252,7 +252,7 @@ describe('Habit API', () => {
       const deletedHabitInDb = await Habit.findById(testHabit._id);
       expect(deletedHabitInDb).toBeNull();
     });
-
+    
     it('should return 404 for deleting a non-existent habit', async () => {
         const nonExistentId = new mongoose.Types.ObjectId();
         const res = await request(app).delete(`/api/v1/habits/${nonExistentId}`);

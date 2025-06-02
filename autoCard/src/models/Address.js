@@ -57,7 +57,7 @@ addressSchema.index({ city: 1 });
 addressSchema.index({ postalCode: 1 });
 addressSchema.index({ country: 1, stateOrProvince: 1 }); // Compound index
 // If user association is added:
-// addressSchema.index({ user: 1 });
+// addressSchema.index({ user: 1 }); 
 
 const Address = mongoose.model('Address', addressSchema);
 

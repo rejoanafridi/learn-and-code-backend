@@ -1,0 +1,40 @@
+{
+  "name": "autocrud-cli",
+  "version": "1.0.0",
+  "description": "A CLI tool to auto-generate CRUD boilerplate for Node.js Express projects.",
+  "main": "dist/index.js",
+  "bin": {
+    "autocrud": "dist/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc -w & nodemon dist/index.js"
+  },
+  "keywords": [
+    "cli",
+    "crud",
+    "generator",
+    "node",
+    "express",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.8",
+    "@types/node": "^22.15.29",
+    "@types/yargs": "^16.0.9",
+    "copyfiles": "^2.4.1",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "fs-extra": "^11.3.0",
+    "handlebars": "^4.7.8",
+    "inquirer": "^12.6.3",
+    "yargs": "^16.2.0"
+  }
+}

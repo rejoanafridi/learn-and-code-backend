@@ -1,0 +1,44 @@
+import mongoose, { Document, Schema, Types } from 'mongoose'; // Added Types for Schema.Types
+
+// Interface definition based on fields
+export interface I{{resourceNamePascalCase}} extends Document {
+  {{#each fields}}
+  {{this.name}}{{#unless this.required}}?{{/unless}}: {{this.typeScriptType}}; // Will define a helper for typeScriptType
+  {{/each}}
+  // Standard Timestamps
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+const {{resourceNameCamelCase}}SchemaDefinition: mongoose.SchemaDefinition = {
+  {{#each fields}}
+  {{this.name}}: {
+    type: Schema.Types.{{this.mongooseType}}{{#if this.arrayElementType }}[Schema.Types.{{this.arrayElementType}}]{{/if}},
+    {{#if this.required}}required: true,{{/if}}
+    {{#if this.unique}}unique: true,{{/if}}
+    {{#if this.ref}}ref: '{{this.ref}}',{{/if}}
+    {{#if this.defaultValueStringified}}default: {{{this.defaultValueStringified}}},{{/if}} // Use triple-stash for unescaped default value
+    trim: {{#ifEquals this.type "String"}}true{{else}}undefined{{/ifEquals}}, // Example: trim only for String types
+  },
+  {{/each}}
+};
+
+// If no fields are added, Mongoose will create a schema with only _id.
+// Consider adding a default field if fields array is empty, or let Mongoose handle it.
+// if (Object.keys({{resourceNameCamelCase}}SchemaDefinition).length === 0) {
+//   console.warn("Schema for {{resourceNamePascalCase}} is empty. Consider adding fields or a default field.");
+//   // Optionally add a default field:
+//   // {{resourceNameCamelCase}}SchemaDefinition.name = { type: String, required: true, default: 'Default Name' };
+// }
+
+const {{resourceNameCamelCase}}Schema: Schema = new Schema(
+  {{resourceNameCamelCase}}SchemaDefinition,
+  {
+    timestamps: true, // Automatically add createdAt and updatedAt
+  }
+);
+
+// Example of an index (can be made dynamic based on user input later)
+// {{resourceNameCamelCase}}Schema.index({ name: 'text' }); 
+
+export default mongoose.model<I{{resourceNamePascalCase}}>('{{resourceNamePascalCase}}', {{resourceNameCamelCase}}Schema);

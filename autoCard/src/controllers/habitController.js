@@ -102,19 +102,19 @@ exports.updateHabit = async (req, res) => {
     // if (!habit) {
     //   return res.status(404).json({ success: false, error: 'Habit not found or not authorized' });
     // }
-
+    
     // Logic for marking habit complete & updating streaks
     if (updates.markComplete) { // Expecting a field like { "markComplete": true }
       const habit = await Habit.findById(habitId); // Fetch current habit
       if (!habit) {
           return res.status(404).json({ success: false, error: 'Habit not found' });
       }
-
+      
       // Simple streak logic:
       // More sophisticated logic would check if lastCompletedDate was yesterday/last week etc.
       const today = new Date();
       today.setHours(0,0,0,0); // Normalize today's date
-
+      
       let newStreak = habit.currentStreak;
       if (habit.lastCompletedDate) {
         const lastCompleted = new Date(habit.lastCompletedDate);
@@ -134,7 +134,7 @@ exports.updateHabit = async (req, res) => {
       } else { // First time completing
         newStreak = 1;
       }
-
+      
       updates.lastCompletedDate = new Date();
       updates.currentStreak = newStreak;
       if (newStreak > habit.longestStreak) {

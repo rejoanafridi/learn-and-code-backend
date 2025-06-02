@@ -14,7 +14,7 @@ autoCard API is a RESTful service for managing cards (tasks or items) with featu
 1.  **Clone the repository:**
     ```bash
     git clone <repository-url>
-    cd autoCard
+    cd autoCard 
     ```
     *(Note: In this environment, the code is already checked out in `/app/autoCard`)*
 
@@ -36,7 +36,7 @@ autoCard API is a RESTful service for managing cards (tasks or items) with featu
 
 *   **Development mode (requires nodemon):**
     ```bash
-    npm run dev
+    npm run dev 
     ```
     *(Note: `nodemon` is listed in `package.json`'s dev script but wasn't explicitly installed as a dev dependency in previous steps. You might need to install it: `npm install --save-dev nodemon`)*
 
@@ -243,7 +243,7 @@ Manages product information, including inventory and pricing. All product endpoi
       "pagination": {
         "currentPage": 1,
         "totalPages": 1,
-        "totalProducts": 1
+        "totalProducts": 1 
       },
       "data": [
         {

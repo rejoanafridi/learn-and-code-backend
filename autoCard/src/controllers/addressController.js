@@ -38,7 +38,7 @@ exports.getAllAddresses = async (req, res) => {
     const filterOptions = {};
     // Add user filter if addresses are user-specific:
     // if (req.user) { filterOptions.user = req.user.id; }
-
+    
     if (req.query.city) {
       filterOptions.city = { $regex: req.query.city, $options: 'i' };
     }

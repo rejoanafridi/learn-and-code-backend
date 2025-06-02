@@ -1,0 +1,129 @@
+import { Request, Response, NextFunction } from 'express';
+import {{resourceNamePascalCase}} from '../models/{{resourceNameLowercase}}.model'; // Adjust path as needed
+// import { AppError } from '../utils/AppError'; // Example for error handling
+
+// @desc    Create a new {{resourceNameLowercase}}
+// @route   POST /api/v1/{{resourceNamePluralLowercase}}
+// @access  Private (example)
+export const create{{resourceNamePascalCase}} = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const new{{resourceNamePascalCase}} = await {{resourceNamePascalCase}}.create(req.body);
+    res.status(201).json({
+      success: true,
+      data: new{{resourceNamePascalCase}},
+    });
+  } catch (error) {
+    // next(new AppError(`Error creating {{resourceNameLowercase}}: ${(error as Error).message}`, 400));
+    next(error); // Basic error forwarding
+  }
+};
+
+// @desc    Get all {{resourceNamePluralLowercase}}
+// @route   GET /api/v1/{{resourceNamePluralLowercase}}
+// @access  Public
+export const getAll{{resourceNamePascalCase}}s = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Basic Pagination (example, can be enhanced)
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    // Construct filter object from query parameters, excluding pagination params
+    const queryFilters = { ...req.query };
+    delete queryFilters.page;
+    delete queryFilters.limit;
+    // Add more sophisticated filtering logic here (e.g., regex for strings, ranges for numbers/dates)
+
+    const {{resourceNamePluralLowercase}} = await {{resourceNamePascalCase}}.find(queryFilters) 
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // Example sort
+
+    const totalDocuments = await {{resourceNamePascalCase}}.countDocuments(queryFilters);
+
+    res.status(200).json({
+      success: true,
+      count: {{resourceNamePluralLowercase}}.length,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalDocuments / limit),
+        totalDocuments,
+      },
+      data: {{resourceNamePluralLowercase}},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get a single {{resourceNameLowercase}} by ID
+// @route   GET /api/v1/{{resourceNamePluralLowercase}}/:id
+// @access  Public
+export const get{{resourceNamePascalCase}}ById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {{resourceNameLowercase}} = await {{resourceNamePascalCase}}.findById(req.params.id);
+    if (!{{resourceNameLowercase}}) {
+      // return next(new AppError('{{resourceNamePascalCase}} not found', 404));
+      return res.status(404).json({ success: false, error: '{{resourceNamePascalCase}} not found with id ' + req.params.id });
+    }
+    res.status(200).json({
+      success: true,
+      data: {{resourceNameLowercase}},
+    });
+  } catch (error) {
+    // Catching potential CastError if the ID format is invalid
+    if ((error as Error).name === 'CastError') {
+        return res.status(400).json({ success: false, error: 'Invalid {{resourceNamePascalCase}} ID format: ' + req.params.id });
+    }
+    next(error);
+  }
+};
+
+// @desc    Update a {{resourceNameLowercase}}
+// @route   PUT /api/v1/{{resourceNamePluralLowercase}}/:id
+// @access  Private
+export const update{{resourceNamePascalCase}} = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {{resourceNameLowercase}} = await {{resourceNamePascalCase}}.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!{{resourceNameLowercase}}) {
+      // return next(new AppError('{{resourceNamePascalCase}} not found', 404));
+      return res.status(404).json({ success: false, error: '{{resourceNamePascalCase}} not found with id ' + req.params.id });
+    }
+    res.status(200).json({
+      success: true,
+      data: {{resourceNameLowercase}},
+    });
+  } catch (error) {
+    if ((error as Error).name === 'CastError') {
+        return res.status(400).json({ success: false, error: 'Invalid {{resourceNamePascalCase}} ID format: ' + req.params.id });
+    }
+    // Add more specific error handling for validation or duplicate keys if needed
+    next(error);
+  }
+};
+
+// @desc    Delete a {{resourceNameLowercase}}
+// @route   DELETE /api/v1/{{resourceNamePluralLowercase}}/:id
+// @access  Private
+export const delete{{resourceNamePascalCase}} = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {{resourceNameLowercase}} = await {{resourceNamePascalCase}}.findByIdAndDelete(req.params.id);
+    if (!{{resourceNameLowercase}}) {
+      // return next(new AppError('{{resourceNamePascalCase}} not found', 404));
+      return res.status(404).json({ success: false, error: '{{resourceNamePascalCase}} not found with id ' + req.params.id });
+    }
+    res.status(200).json({
+      success: true,
+      message: '{{resourceNamePascalCase}} deleted successfully',
+      data: {} // Or send back the deleted item: data: {{resourceNameLowercase}}
+    });
+  } catch (error) {
+    if ((error as Error).name === 'CastError') {
+        return res.status(400).json({ success: false, error: 'Invalid {{resourceNamePascalCase}} ID format: ' + req.params.id });
+    }
+    next(error);
+  }
+};

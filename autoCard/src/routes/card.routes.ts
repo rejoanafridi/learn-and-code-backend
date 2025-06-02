@@ -1,13 +1,13 @@
-const express = require('express');
-const router = express.Router();
-
-const {
+import express, { Router } from 'express';
+import {
   createCard,
   getAllCards,
   getCardById,
   updateCard,
   deleteCard,
-} = require('../controllers/cardController');
+} from '../controllers/card.controller'; // Updated import path
+
+const router: Router = express.Router();
 
 // Route for creating a new card and getting all cards
 router.route('/')
@@ -15,9 +15,9 @@ router.route('/')
   .get(getAllCards);
 
 // Route for getting, updating, and deleting a specific card by its ID
-router.route('/:cardId')
+router.route('/:cardId') // Reverted to :cardId to match controller
   .get(getCardById)
   .put(updateCard)
   .delete(deleteCard);
 
-module.exports = router;
+export default router;

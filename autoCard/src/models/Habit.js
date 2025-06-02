@@ -29,7 +29,7 @@ const habitSchema = new mongoose.Schema({
     // validate: {
     //   validator: function(v) {
     //     if (this.frequency === 'specific_days') {
-    //       return Array.isArray(v) && v.length > 0 && v.every(day =>
+    //       return Array.isArray(v) && v.length > 0 && v.every(day => 
     //         ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].includes(day)
     //       );
     //     }
